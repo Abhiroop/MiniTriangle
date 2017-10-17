@@ -58,6 +58,7 @@ import Scanner
     ':'         { (Colon, $$) }
     ':='        { (ColEq, $$) }
     '='         { (Equals, $$) }
+    '?'         { (Question, $$) }
     BEGIN       { (Begin, $$) }
     CONST       { (Const, $$) }
     DO          { (Do, $$) }
@@ -94,6 +95,7 @@ import Scanner
 %left '+' '-'
 %left '*' '/'
 %right '^'
+%right '?' ':'
 
 %%
 
@@ -102,7 +104,7 @@ program : command       { AST $1 }
 
 
 commands :: { [Command] }
-commands : command              { [$1] } 
+commands : command              { [$1] }
          | command ';' commands { $1 : $3 }
 
 
@@ -173,6 +175,11 @@ expression
         { ExpApp {eaFun     = $2,
                   eaArgs    = [$1,$3],
                   expSrcPos = srcPos $1} }
+    | expression '?' expression ':' expression %prec '?'
+        { ExpTernary {etBoolExp    = $1,
+                      etExp1       = $3,
+                      etExp2       = $5,
+                      expSrcPos    = srcPos $1} }
 
 
 primary_expression :: { Expression }
@@ -245,7 +252,7 @@ unary_op
 declarations :: { [Declaration] }
 declarations
     : declaration
-        { [$1] } 
+        { [$1] }
     | declaration ';' declarations
         { $1 : $3 }
 

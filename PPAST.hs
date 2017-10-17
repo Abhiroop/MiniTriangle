@@ -84,7 +84,11 @@ ppExpression n (ExpApp {eaFun = f, eaArgs = es, expSrcPos = sp}) =
     indent n . showString "ExpApp" . spc . ppSrcPos sp . nl
     . ppExpression (n+1) f
     . ppSeq (n+1) ppExpression es
-
+ppExpression n (ExpTernary {..}) =
+    indent n . showString "ExpTernary" . spc . ppSrcPos expSrcPos . nl
+    . ppExpression (n+1) etBoolExp
+    . ppExpression (n+1) etExp1
+    . ppExpression (n+1) etExp2
 
 ------------------------------------------------------------------------------
 -- Pretty printing of declarations
