@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs #-}
 {-
 ******************************************************************************
 *                                  H M T C                                   *
@@ -188,6 +189,7 @@ instance Applicative D where
 instance Monad D where
     return = pure               -- Backwards compatibility
 
+    (>>=) :: D a -> (a -> D b) -> D b
     d >>= f = D (\dms ->
                      case unD d dms of
                          (Nothing, dms') -> (Nothing, dms')

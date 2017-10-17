@@ -66,7 +66,9 @@ import Scanner
     IF          { (If, $$) }
     IN          { (In, $$) }
     LET         { (Let, $$) }
+    REPEAT      { (Repeat, $$) }
     THEN        { (Then, $$) }
+    UNTIL       { (Until, $$) }
     VAR         { (Var, $$) }
     WHILE       { (While, $$) }
     LITINT      { (LitInt {}, _) }
@@ -122,6 +124,8 @@ command
           else
               CmdSeq {csCmds = $2, cmdSrcPos = srcPos $2}
         }
+   | REPEAT command UNTIL expression
+       { CmdRepeat {crBody = $2, crCond = $4, cmdSrcPos = $1} }
 
 
 expressions :: { [Expression] }

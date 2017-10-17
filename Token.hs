@@ -40,7 +40,9 @@ data Token
     | If        -- ^ \"if\"
     | In        -- ^ \"in\"
     | Let       -- ^ \"let\"
+    | Repeat    -- ^ \"repeat\"
     | Then      -- ^ \"then\"
+    | Until     -- ^ \"until\"
     | Var       -- ^ \"var\"
     | While     -- ^ \"while\"
 

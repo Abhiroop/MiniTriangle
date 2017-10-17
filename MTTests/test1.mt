@@ -6,4 +6,4 @@ in
     begin
         m := 1 + 2 * (n + 1);
         putint(m)
-    end
+   end

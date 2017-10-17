@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 {-
 ******************************************************************************
 *                                  H M T C                                   *
@@ -40,30 +41,34 @@ ppAST ast = ppCommand 0 (astCmd ast) ""
 ------------------------------------------------------------------------------
 
 ppCommand :: Int -> Command -> ShowS
-ppCommand n (CmdAssign {caVar = v, caVal = e, cmdSrcPos = sp}) =
-    indent n . showString "CmdAssign" . spc . ppSrcPos sp . nl
-    . ppExpression (n+1) v
-    . ppExpression (n+1) e
-ppCommand n (CmdCall {ccProc = p, ccArgs = es, cmdSrcPos = sp}) =
-    indent n . showString "CmdCall" . spc . ppSrcPos sp . nl
-    . ppExpression (n+1) p
-    . ppSeq (n+1) ppExpression es
-ppCommand n (CmdSeq {csCmds = cs, cmdSrcPos = sp}) =
-    indent n . showString "CmdSeq" . spc . ppSrcPos sp . nl
-    . ppSeq (n+1) ppCommand cs
-ppCommand n (CmdIf {ciCond = e, ciThen = c1, ciElse = c2, cmdSrcPos = sp}) =
-    indent n . showString "CmdIf" . spc . ppSrcPos sp . nl
-    . ppExpression (n+1) e
-    . ppCommand (n+1) c1
-    . ppCommand (n+1) c2
-ppCommand n (CmdWhile {cwCond = e, cwBody = c, cmdSrcPos = sp}) =
-    indent n . showString "CmdWhile" . spc . ppSrcPos sp . nl
-    . ppExpression (n+1) e
-    . ppCommand (n+1) c
-ppCommand n (CmdLet {clDecls = ds, clBody = c, cmdSrcPos = sp}) =
-    indent n . showString "CmdLet" . spc . ppSrcPos sp . nl
-    . ppSeq (n+1) ppDeclaration ds
-    . ppCommand (n+1) c
+ppCommand n (CmdAssign {..}) =
+    indent n . showString "CmdAssign" . spc . ppSrcPos cmdSrcPos. nl
+    . ppExpression (n+1) caVar
+    . ppExpression (n+1) caVal
+ppCommand n (CmdCall {..}) =
+    indent n . showString "CmdCall" . spc . ppSrcPos cmdSrcPos. nl
+    . ppExpression (n+1) ccProc
+    . ppSeq (n+1) ppExpression ccArgs
+ppCommand n (CmdSeq {..}) =
+    indent n . showString "CmdSeq" . spc . ppSrcPos cmdSrcPos. nl
+    . ppSeq (n+1) ppCommand csCmds
+ppCommand n (CmdIf {..}) =
+    indent n . showString "CmdIf" . spc . ppSrcPos cmdSrcPos. nl
+    . ppExpression (n+1) ciCond
+    . ppCommand (n+1) ciThen
+    . ppCommand (n+1) ciElse
+ppCommand n (CmdWhile {..}) =
+    indent n . showString "CmdWhile" . spc . ppSrcPos cmdSrcPos. nl
+    . ppExpression (n+1) cwCond
+    . ppCommand (n+1) cwBody
+ppCommand n (CmdLet {..}) =
+    indent n . showString "CmdLet" . spc . ppSrcPos cmdSrcPos. nl
+    . ppSeq (n+1) ppDeclaration clDecls
+    . ppCommand (n+1) clBody
+ppCommand n (CmdRepeat {..}) =
+    indent n . showString "CmdRepeat" . spc . ppSrcPos cmdSrcPos . nl
+    . ppCommand (n + 1) crBody
+    . ppExpression (n + 1) crCond
 
 
 ------------------------------------------------------------------------------
@@ -71,7 +76,7 @@ ppCommand n (CmdLet {clDecls = ds, clBody = c, cmdSrcPos = sp}) =
 ------------------------------------------------------------------------------
 
 ppExpression :: Int -> Expression -> ShowS
-ppExpression n (ExpLitInt {eliVal = v}) = 
+ppExpression n (ExpLitInt {eliVal = v}) =
     indent n . showString "ExpLitInt". spc . shows v . nl
 ppExpression n (ExpVar {evVar = v}) =
     indent n . showString "ExpVar" . spc . ppName v . nl

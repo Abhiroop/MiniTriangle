@@ -11,7 +11,7 @@
 ******************************************************************************
 -}
 
--- | Monad for scanning and parsing. 
+-- | Monad for scanning and parsing.
 -- The scanner and parser are both monadic, following the design outlined
 -- in the Happy documentation on monadic parsers. The parse monad P
 -- is built on top of the diagnostics monad D, additionally keeping track

@@ -79,7 +79,7 @@ nextTabStop :: Int -> Int
 nextTabStop n = n + (tabWidth - (n-1) `mod` tabWidth)
 
 
--- | MiniTriangle scanner. 
+-- | MiniTriangle scanner.
 
 scanner :: ((Token, SrcPos) -> P a) -> P a
 scanner cont = P $ scan
@@ -146,7 +146,9 @@ scanner cont = P $ scan
         mkIdOrKwd "if"    = If
         mkIdOrKwd "in"    = In
         mkIdOrKwd "let"   = Let
+        mkIdOrKwd "repeat"= Repeat
         mkIdOrKwd "then"  = Then
+        mkIdOrKwd "until" = Until
         mkIdOrKwd "var"   = Var
         mkIdOrKwd "while" = While
         mkIdOrKwd name    = Id {idName = name}
