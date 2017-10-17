@@ -116,7 +116,6 @@ data Command
           cmdSrcPos :: SrcPos
       }
 
-
 instance HasSrcPos Command where
     srcPos = cmdSrcPos
 
@@ -139,6 +138,14 @@ data Expression
           eaArgs    :: [Expression],    -- ^ Arguments
           expSrcPos :: SrcPos
       }
+    -- | Ternary expression
+    | ExpTernary {
+          etBoolExp :: Expression,      -- ^ Boolean expression
+          etExp1    :: Expression,      -- ^ Expression1
+          etExp2    :: Expression,      -- ^ Expression2
+          expSrcPos :: SrcPos
+      }
+
 
 
 instance HasSrcPos Expression where
