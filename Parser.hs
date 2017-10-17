@@ -482,7 +482,7 @@ happyReduction_20 (happy_x_5 `HappyStk`
 		 (ExpTernary {etBoolExp    = happy_var_1,
                       etExp1       = happy_var_3,
                       etExp2       = happy_var_5,
-                      expSrcPos     = srcPos happy_var_1}
+                      expSrcPos    = srcPos happy_var_1}
 	) `HappyStk` happyRest}}}
 
 happyReduce_21 = happySpecReduce_1  5# happyReduction_21

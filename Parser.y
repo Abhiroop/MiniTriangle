@@ -179,7 +179,7 @@ expression
         { ExpTernary {etBoolExp    = $1,
                       etExp1       = $3,
                       etExp2       = $5,
-                      expSrcPos     = srcPos $1} }
+                      expSrcPos    = srcPos $1} }
 
 
 primary_expression :: { Expression }
