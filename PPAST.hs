@@ -69,6 +69,8 @@ ppCommand n (CmdRepeat {..}) =
     indent n . showString "CmdRepeat" . spc . ppSrcPos cmdSrcPos . nl
     . ppCommand (n + 1) crBody
     . ppExpression (n + 1) crCond
+ppCommand n (CmdEmpty {..}) = id
+
 
 
 ------------------------------------------------------------------------------
