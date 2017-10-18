@@ -115,7 +115,9 @@ command
     | var_expression '(' expressions ')'
         { CmdCall {ccProc = $1, ccArgs = $3, cmdSrcPos = srcPos $1} }
     | IF expression THEN command ELSE command
-        { CmdIf {ciCond = $2, ciThen = $4, ciElse = $6, cmdSrcPos = $1} }
+        { CmdIf {ciCond = $2, ciThen = $4, ciElse = Just $6, cmdSrcPos = $1} }
+    | IF expression THEN command
+        { CmdIf {ciCond = $2, ciThen = $4, ciElse = Nothing, cmdSrcPos = $1} }
     | WHILE expression DO command
         { CmdWhile {cwCond = $2, cwBody = $4, cmdSrcPos = $1} }
     | LET declarations IN command
@@ -128,7 +130,6 @@ command
         }
    | REPEAT command UNTIL expression
        { CmdRepeat {crBody = $2, crCond = $4, cmdSrcPos = $1} }
-
 
 expressions :: { [Expression] }
 expressions : expression { [$1] }

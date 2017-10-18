@@ -23,7 +23,7 @@ import Name (Name)
 import SrcPos (SrcPos)
 import PPUtilities
 import AST
-
+import Data.Maybe
 
 ------------------------------------------------------------------------------
 -- Pretty printing of AST
@@ -56,7 +56,7 @@ ppCommand n (CmdIf {..}) =
     indent n . showString "CmdIf" . spc . ppSrcPos cmdSrcPos. nl
     . ppExpression (n+1) ciCond
     . ppCommand (n+1) ciThen
-    . ppCommand (n+1) ciElse
+    . ppCommand (n+1) (fromMaybe (CmdEmpty "") ciElse)
 ppCommand n (CmdWhile {..}) =
     indent n . showString "CmdWhile" . spc . ppSrcPos cmdSrcPos. nl
     . ppExpression (n+1) cwCond

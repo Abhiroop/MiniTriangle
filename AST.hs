@@ -94,7 +94,7 @@ data Command
     | CmdIf {
           ciCond    :: Expression,      -- ^ Condition
           ciThen    :: Command,         -- ^ Then-branch
-          ciElse    :: Command,         -- ^ Else-branch
+          ciElse    :: Maybe Command,   -- ^ Else-branch
           cmdSrcPos :: SrcPos
       }
     -- | While-loop
@@ -115,6 +115,7 @@ data Command
           crCond    :: Expression,      -- ^ Loop condition
           cmdSrcPos :: SrcPos
       }
+    | CmdEmpty { ceBody  :: String }
 
 instance HasSrcPos Command where
     srcPos = cmdSrcPos
