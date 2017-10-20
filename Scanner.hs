@@ -143,6 +143,7 @@ scanner cont = P $ scan
         mkIdOrKwd "const" = Const
         mkIdOrKwd "do"    = Do
         mkIdOrKwd "else"  = Else
+        mkIdOrKwd "elsif" = Elsif
         mkIdOrKwd "end"   = End
         mkIdOrKwd "if"    = If
         mkIdOrKwd "in"    = In

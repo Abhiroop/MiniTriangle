@@ -56,6 +56,7 @@ ppCommand n (CmdIf {..}) =
     indent n . showString "CmdIf" . spc . ppSrcPos cmdSrcPos. nl
     . ppExpression (n+1) ciCond
     . ppCommand (n+1) ciThen
+    . ppSeq (n+1) (\n (exp,com) -> ppExpression n exp . ppCommand n com) ciElsif
     . ppCommand (n+1) (fromMaybe (CmdEmpty "") ciElse)
 ppCommand n (CmdWhile {..}) =
     indent n . showString "CmdWhile" . spc . ppSrcPos cmdSrcPos. nl
