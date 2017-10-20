@@ -72,6 +72,8 @@ instance HasSrcPos AST where
 -- variable expression has an associated source position, whereas names,
 -- currently represented by strings, have not.
 
+type ElsIfExpr = [(Expression,Command)]
+
 data Command
     -- | Assignment
     = CmdAssign {
@@ -94,7 +96,8 @@ data Command
     | CmdIf {
           ciCond    :: Expression,      -- ^ Condition
           ciThen    :: Command,         -- ^ Then-branch
-          ciElse    :: Command,         -- ^ Else-branch
+          ciElsif   :: ElsIfExpr,       -- ^ The optional elsif expressions
+          ciElse    :: Maybe Command,   -- ^ Else-branch
           cmdSrcPos :: SrcPos
       }
     -- | While-loop
@@ -115,6 +118,7 @@ data Command
           crCond    :: Expression,      -- ^ Loop condition
           cmdSrcPos :: SrcPos
       }
+    | CmdEmpty { ceBody  :: String }
 
 instance HasSrcPos Command where
     srcPos = cmdSrcPos

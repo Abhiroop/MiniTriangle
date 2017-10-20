@@ -63,6 +63,7 @@ import Scanner
     CONST       { (Const, $$) }
     DO          { (Do, $$) }
     ELSE        { (Else, $$) }
+    ELSIF       { (Elsif, $$) }
     END         { (End, $$) }
     IF          { (If, $$) }
     IN          { (In, $$) }
@@ -114,8 +115,8 @@ command
         { CmdAssign {caVar = $1, caVal=$3, cmdSrcPos = srcPos $1} }
     | var_expression '(' expressions ')'
         { CmdCall {ccProc = $1, ccArgs = $3, cmdSrcPos = srcPos $1} }
-    | IF expression THEN command ELSE command
-        { CmdIf {ciCond = $2, ciThen = $4, ciElse = $6, cmdSrcPos = $1} }
+    | IF expression THEN command terminalElsIf terminalElse
+        { CmdIf {ciCond = $2, ciThen = $4, ciElsif = $5, ciElse = $6, cmdSrcPos = $1} }
     | WHILE expression DO command
         { CmdWhile {cwCond = $2, cwBody = $4, cmdSrcPos = $1} }
     | LET declarations IN command
@@ -129,11 +130,15 @@ command
    | REPEAT command UNTIL expression
        { CmdRepeat {crBody = $2, crCond = $4, cmdSrcPos = $1} }
 
-
 expressions :: { [Expression] }
 expressions : expression { [$1] }
             | expression ',' expressions { $1 : $3 }
 
+terminalElsIf :: { [( Expression, Command)]}
+terminalElsIf : { [] } | ELSIF expression THEN command terminalElsIf { ($2,$4):$5 }
+
+terminalElse :: {Maybe Command}
+terminalElse : { Nothing } | ELSE command { Just $2 }
 
 -- The terminal associated with a precedence declaration has to occur
 -- *literally* in a rule if precedence declarations are to be taken into
