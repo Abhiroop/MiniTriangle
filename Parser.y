@@ -74,6 +74,7 @@ import Scanner
     VAR         { (Var, $$) }
     WHILE       { (While, $$) }
     LITINT      { (LitInt {}, _) }
+    LITCHAR     { (LitChar {}, _) }
     ID          { (Id {}, _) }
     '+'         { (Op {opName="+"},   _) }
     '-'         { (Op {opName="-"},   _) }
@@ -190,6 +191,8 @@ expression
 primary_expression :: { Expression }
     : LITINT
         { ExpLitInt {eliVal = tspLIVal $1, expSrcPos = tspSrcPos $1} }
+    | LITCHAR
+        { ExpLitChar {eliChar = tspLIChar $1, expSrcPos = tspSrcPos $1} }
     | var_expression
         { $1 }
     | opclass_unary primary_expression
@@ -303,6 +306,9 @@ tspLIVal :: (Token,SrcPos) -> Integer
 tspLIVal (LitInt {liVal = n}, _) = n
 tspLIVal _ = parserErr "tspLIVal" "Not a LitInt"
 
+tspLIChar :: (Token,SrcPos) -> Char
+tspLIChar (LitChar {liChar = c}, _) = c
+tspLIChar _ = parserErr "tspLIChar" "Not a LitChar"
 
 tspIdName :: (Token,SrcPos) -> Name
 tspIdName (Id {idName = nm}, _) = nm

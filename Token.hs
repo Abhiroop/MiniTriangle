@@ -49,9 +49,10 @@ data Token
     | While     -- ^ \"while\"
 
     -- Tokens with variable spellings
-    | LitInt {liVal :: Integer}         -- ^ Integer literals
-    | Id     {idName :: Name}           -- ^ Identifiers
-    | Op     {opName :: Name}           -- ^ Operators
+    | LitInt  {liVal  :: Integer}        -- ^ Integer literals
+    | LitChar {liChar :: Char}           -- ^ Character literals
+    | Id      {idName :: Name}           -- ^ Identifiers
+    | Op      {opName :: Name}           -- ^ Operators
 
     -- End Of File marker
     | EOF                               -- ^ End of file (input) marker.
