@@ -1,4 +1,5 @@
 begin
-	c := a;
-	c := n
+	c := 'a';
+        c := 1;
+        c := b
 end

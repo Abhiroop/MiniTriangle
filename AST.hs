@@ -123,7 +123,6 @@ data Command
 instance HasSrcPos Command where
     srcPos = cmdSrcPos
 
-
 -- | Abstract syntax for the syntactic category Expression
 data Expression
     -- | Literal integer

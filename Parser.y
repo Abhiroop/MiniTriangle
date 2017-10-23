@@ -55,6 +55,7 @@ import Scanner
     ')'         { (RPar, $$) }
     ','         { (Comma, $$) }
     ';'         { (Semicol, $$) }
+    '\''        { (Quote, $$)}
     ':'         { (Colon, $$) }
     ':='        { (ColEq, $$) }
     '='         { (Equals, $$) }
@@ -156,7 +157,9 @@ terminalElse : { Nothing } | ELSE command { Just $2 }
 expression :: { Expression }
 expression
     : primary_expression
-        { $1 }
+         { $1 }
+    | '\'' primary_expression '\''
+         { $2 }
     | expression opclass_disjunctive expression %prec '||'
         { ExpApp {eaFun     = $2,
                   eaArgs    = [$1,$3],
