@@ -102,7 +102,7 @@ scanner cont = P $ scan
         scan l c ('\'' : s)  = retTkn Quote l c (c + 1) s
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
-                         | isAlpha x = scanIdOrKwd l c x s
+                         | isAlpha x = scanLitChar l c x s
                          | isOpChr x = scanOperator l c x s
                          | otherwise = do
                                            emitErrD (SrcPos l c)
@@ -117,6 +117,11 @@ scanner cont = P $ scan
         scanLitInt l c x s = retTkn (LitInt (read (x : tail))) l c c' s'
             where
                 (tail, s') = span isDigit s
+                c'         = c + 1 + length tail
+
+        scanLitChar l c x s = retTkn (LitChar (read ('\'' : x : '\'': tail))) l c c' s'
+            where
+                (tail, s') = span isAlpha s
                 c'         = c + 1 + length tail
 
         -- Allows multi-character operators.
