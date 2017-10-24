@@ -31,7 +31,6 @@ data Token
     | ColEq     -- ^ \":=\"
     | Equals    -- ^ \"=\"
     | Question  -- ^ \"?\"
-    | Quote     -- ^ \"'\"
 
     -- Keywords
     | Begin     -- ^ \"begin\"
