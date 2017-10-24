@@ -100,16 +100,16 @@ scanner cont = P $ scan
         scan l c (',' : s)   = retTkn Comma l c (c + 1) s
         scan l c (';' : s)   = retTkn Semicol l c (c + 1) s
         -- Scan character literals
-        scan l c ('\'' : x : '\'' : s) | isDigit x = scanLitInt l c x s
-                                       | isAlpha x = scanLitChar l c x s
-                                       | isOpChr x = scanOperator l c x s
-                                       | otherwise = do
-                                                        emitErrD (SrcPos l c)
-                                                                 ("Lexical error: Illegal \
-                                                                  \character "
-                                                                  ++ show x
-                                                                  ++ " (discarded)")
-                                                        scan l (c + 1) s
+        scan l c ('\'' : x : '\'' : s) | isDigit x   = scanLitInt l c x s
+                                       | isCharLit x = scanLitChar l c x s
+                                       | isOpChr x   = scanOperator l c x s
+                                       | otherwise   = do
+                                                          emitErrD (SrcPos l c)
+                                                                   ("Lexical error: Illegal \
+                                                                    \character "
+                                                                    ++ show x
+                                                                    ++ " (discarded)")
+                                                          scan l (c + 1) s
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
                          | isAlpha x = scanIdOrKwd l c x s
@@ -131,7 +131,7 @@ scanner cont = P $ scan
 
         scanLitChar l c x s = retTkn (LitChar (read ('\'' : x : '\'' : tail) :: Char)) l c c' s'
             where
-                (tail, s') = span isAlpha s
+                (tail, s') = span isCharLit s
                 c'         = c + 1 + length tail
 
         -- Allows multi-character operators.
@@ -209,3 +209,10 @@ acceptToken tss (ts@(t,_)) =
         case t of
             EOF -> return (reverse tss')
             _   -> scanner (acceptToken tss')
+
+isCharLit :: Char -> Bool
+isCharLit x =  isAlpha x
+            || ('\n' == x )
+            || ('\r' == x )
+            || ('\t' == x )
+            || ('\\' == x )
