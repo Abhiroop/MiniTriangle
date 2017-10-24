@@ -99,10 +99,20 @@ scanner cont = P $ scan
         scan l c (')' : s)   = retTkn RPar l c (c + 1) s
         scan l c (',' : s)   = retTkn Comma l c (c + 1) s
         scan l c (';' : s)   = retTkn Semicol l c (c + 1) s
-        scan l c ('\'' : s)  = retTkn Quote l c (c + 1) s
+        -- Scan character literals
+        scan l c ('\'' : x : '\'' : s) | isDigit x = scanLitInt l c x s
+                                       | isAlpha x = scanLitChar l c x s
+                                       | isOpChr x = scanOperator l c x s
+                                       | otherwise = do
+                                                        emitErrD (SrcPos l c)
+                                                                 ("Lexical error: Illegal \
+                                                                  \character "
+                                                                  ++ show x
+                                                                  ++ " (discarded)")
+                                                        scan l (c + 1) s
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
-                         | isAlpha x = scanLitChar l c x s
+                         | isAlpha x = scanIdOrKwd l c x s
                          | isOpChr x = scanOperator l c x s
                          | otherwise = do
                                            emitErrD (SrcPos l c)
@@ -119,7 +129,7 @@ scanner cont = P $ scan
                 (tail, s') = span isDigit s
                 c'         = c + 1 + length tail
 
-        scanLitChar l c x s = retTkn (LitChar (read ('\'' : x : '\'': tail))) l c c' s'
+        scanLitChar l c x s = retTkn (LitChar (read ('\'' : x : '\'' : tail) :: Char)) l c c' s'
             where
                 (tail, s') = span isAlpha s
                 c'         = c + 1 + length tail
