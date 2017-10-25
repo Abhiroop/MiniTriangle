@@ -101,7 +101,7 @@ scanner cont = P $ scan
         scan l c (';' : s)   = retTkn Semicol l c (c + 1) s
         -- Scan graphic character literals
         scan l c ('\'' : x : '\'' : s) | isDigit x   = scanLitInt l c x s
-                                       | isAlpha x = scanLitChar l c x s
+                                       | isAlpha x   = scanLitChar l c x s
                                        | isOpChr x   = scanOperator l c x s
                                        | otherwise   = lexError l c x s
         -- Scan escape characters
@@ -128,7 +128,6 @@ scanner cont = P $ scan
             where
                 (tail, s') = span isAlpha s
                 c'         = c + 1 + length tail
-
 
         lexError l c x s = do
           emitErrD (SrcPos l c) ("Lexical error: Illegal character " ++ show x ++ " (discarded)")
