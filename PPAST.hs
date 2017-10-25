@@ -57,7 +57,7 @@ ppCommand n (CmdIf {..}) =
     . ppExpression (n+1) ciCond
     . ppCommand (n+1) ciThen
     . ppSeq (n+1) (\n (exp,com) -> ppExpression n exp . ppCommand n com) ciElsif
-    . ppCommand (n+1) (fromMaybe (CmdEmpty "") ciElse)
+    . ppOpt (n+1) ppCommand ciElse
 ppCommand n (CmdWhile {..}) =
     indent n . showString "CmdWhile" . spc . ppSrcPos cmdSrcPos. nl
     . ppExpression (n+1) cwCond
@@ -70,7 +70,6 @@ ppCommand n (CmdRepeat {..}) =
     indent n . showString "CmdRepeat" . spc . ppSrcPos cmdSrcPos . nl
     . ppCommand (n + 1) crBody
     . ppExpression (n + 1) crCond
-ppCommand n (CmdEmpty {..}) = id
 
 
 

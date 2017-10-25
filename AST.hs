@@ -118,7 +118,6 @@ data Command
           crCond    :: Expression,      -- ^ Loop condition
           cmdSrcPos :: SrcPos
       }
-    | CmdEmpty { ceBody  :: String }
 
 instance HasSrcPos Command where
     srcPos = cmdSrcPos
