@@ -1,3 +1,3 @@
 begin
-	c := '\t'
+	c := 'a'
 end
