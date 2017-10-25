@@ -1,0 +1,3 @@
+begin
+	c := 'a'
+end

@@ -31,7 +31,7 @@ module Scanner (
 
 -- Standard library imports
 import Data.Char (isDigit, isAlpha, isAlphaNum)
-
+import Debug.Trace
 -- HMTC module imports
 import SrcPos
 import Token
@@ -95,21 +95,23 @@ scanner cont = P $ scan
         scan l c (' ' : s)  = scan l (c + 1) s
         scan l c ('/' : '/' : s) = scan l c (dropWhile (/='\n') s)
         -- Scan graphical tokens
-        scan l c ('(' : s)  = retTkn LPar l c (c + 1) s
-        scan l c (')' : s)  = retTkn RPar l c (c + 1) s
-        scan l c (',' : s)  = retTkn Comma l c (c + 1) s
-        scan l c (';' : s)  = retTkn Semicol l c (c + 1) s
+        scan l c ('(' : s)   = retTkn LPar l c (c + 1) s
+        scan l c (')' : s)   = retTkn RPar l c (c + 1) s
+        scan l c (',' : s)   = retTkn Comma l c (c + 1) s
+        scan l c (';' : s)   = retTkn Semicol l c (c + 1) s
+        -- Scan graphic character literals
+        scan l c ('\'' : x : '\'' : s) | isDigit x   = scanLitInt l c x s
+                                       | isAlpha x   = scanLitChar l c x s
+                                       | isOpChr x   = scanOperator l c x s
+                                       | otherwise   = lexError l c x s
+        -- Scan escape characters
+        scan l c ('\'' : '\\' : x : '\'' : s) | isEscapeChar x = scanEscChar l c x s
+                                              | otherwise   = lexError l c x s
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
                          | isAlpha x = scanIdOrKwd l c x s
                          | isOpChr x = scanOperator l c x s
-                         | otherwise = do
-                                           emitErrD (SrcPos l c)
-                                                    ("Lexical error: Illegal \
-                                                     \character "
-                                                     ++ show x
-                                                     ++ " (discarded)")
-                                           scan l (c + 1) s
+                         | otherwise = lexError l c x s
 
 
         -- scanLitInt :: Int -> Int -> Char -> String -> D a
@@ -117,6 +119,19 @@ scanner cont = P $ scan
             where
                 (tail, s') = span isDigit s
                 c'         = c + 1 + length tail
+
+        scanLitChar l c x s =  retTkn (LitChar (read ('\'' : x : '\'' : tail) :: Char)) l c c' s'
+            where
+                (tail, s') = span isAlpha s
+                c'         = c + 1 + length tail
+        scanEscChar l c x s = retTkn (LitChar (read ('\'' : '\\' : x : '\'' : tail) :: Char)) l c c' s'
+            where
+                (tail, s') = span isAlpha s
+                c'         = c + 1 + length tail
+
+        lexError l c x s = do
+          emitErrD (SrcPos l c) ("Lexical error: Illegal character " ++ show x ++ " (discarded)")
+          scan l (c + 1) s
 
         -- Allows multi-character operators.
         -- scanOperator :: Int -> Int -> Char -> String -> D a
@@ -193,3 +208,10 @@ acceptToken tss (ts@(t,_)) =
         case t of
             EOF -> return (reverse tss')
             _   -> scanner (acceptToken tss')
+
+isEscapeChar :: Char -> Bool
+isEscapeChar x =  ('n' == x )
+               || ('r' == x )
+               || ('t' == x )
+               || ('\\' == x )
+               || ('\'' == x )

@@ -123,7 +123,6 @@ data Command
 instance HasSrcPos Command where
     srcPos = cmdSrcPos
 
-
 -- | Abstract syntax for the syntactic category Expression
 data Expression
     -- | Literal integer
@@ -131,6 +130,11 @@ data Expression
           eliVal    :: Integer,         -- ^ Integer value
           expSrcPos :: SrcPos
       }
+    -- | Character Literal
+    | ExpLitChar {
+          eliChar   :: Char,            -- ^ Character value
+          expSrcPos :: SrcPos
+                 }
     -- | Variable reference
     | ExpVar {
           evVar     :: Name,            -- ^ Name of referenced variable

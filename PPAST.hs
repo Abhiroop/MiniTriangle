@@ -81,6 +81,8 @@ ppCommand n (CmdEmpty {..}) = id
 ppExpression :: Int -> Expression -> ShowS
 ppExpression n (ExpLitInt {eliVal = v}) =
     indent n . showString "ExpLitInt". spc . shows v . nl
+ppExpression n (ExpLitChar {eliChar = c}) =
+    indent n . showString "ExpLitChar" . spc . shows c . nl
 ppExpression n (ExpVar {evVar = v}) =
     indent n . showString "ExpVar" . spc . ppName v . nl
 ppExpression n (ExpApp {eaFun = f, eaArgs = es, expSrcPos = sp}) =
